@@ -67,7 +67,7 @@ def identify_contact(request):
     contact_serializer = ContactSerializer(data=contact_data)
     if contact_serializer.is_valid():
         primary_contact = contact_serializer.save()
-        return Response({'contact': {'primaryContactId': primary_contact.id, 'emails': [], 'phoneNumbers': [], 'secondaryContactIds': []}}, status=status.HTTP_200_OK)
+        return Response({'contact': {'primaryContactId': primary_contact.id, 'emails': [primary_contact.email], 'phoneNumbers': [primary_contact.phoneNumber], 'secondaryContactIds': []}}, status=status.HTTP_200_OK)
     else:
         return Response(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
