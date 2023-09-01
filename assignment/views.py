@@ -21,7 +21,7 @@ def identify_contact(request):
 
         if primary_contact:
             if (email and primary_contact.email != email) or (phoneNumber and primary_contact.phoneNumber != phoneNumber):
-                # Create a secondary contact
+
                 contact_data = {
                     'email': email,
                     'phoneNumber': phoneNumber,
@@ -32,7 +32,7 @@ def identify_contact(request):
                 if contact_serializer.is_valid():
                     secondary_contact = contact_serializer.save()
 
-                    # Return the consolidated contact
+
                     secondary_contacts = existing_contacts.filter(linkPrecedence='secondary')
                     emails = [primary_contact.email] + [contact.email for contact in secondary_contacts]
                     phone_numbers = [primary_contact.phoneNumber] + [contact.phoneNumber for contact in secondary_contacts]
@@ -49,7 +49,7 @@ def identify_contact(request):
                     return Response(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             else:
-                # Existing contact information matches the provided email or phoneNumber
+
                 consolidated_contact = {
                     'primaryContactId': primary_contact.id,
                     'emails': [primary_contact.email],
@@ -58,7 +58,7 @@ def identify_contact(request):
                 }
                 return Response({'contact': consolidated_contact}, status=status.HTTP_200_OK)
 
-    # Create a new primary contact
+    #Comment
     contact_data = {
         'email': email,
         'phoneNumber': phoneNumber,
@@ -67,7 +67,7 @@ def identify_contact(request):
     contact_serializer = ContactSerializer(data=contact_data)
     if contact_serializer.is_valid():
         primary_contact = contact_serializer.save()
-        return Response({'contact': {'primaryContactId': primary_contact.id, 'emails': [], 'phoneNumbers': [], 'secondaryContactIds': []}}, status=status.HTTP_200_OK)
+        return Response({'contact': {'primaryContactId': primary_contact.id, 'emails': [primary_contact.email], 'phoneNumbers': [primary_contact.phoneNumber], 'secondaryContactIds': []}}, status=status.HTTP_200_OK)
     else:
         return Response(contact_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
